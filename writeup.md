@@ -17,7 +17,7 @@ The goals / steps of this project are the following:
 
 [calibration_original]: ./writeup/calibration_original.jpg "Original"
 [calibration_undistorted]: ./writeup/calibration_undistorted.jpg "Undistorted"
-[image2]: ./test_images/test1.jpg "Road Transformed"
+[road_undistorted]: ./writup/test2.jpg "Road Transformed"
 [image3]: ./examples/binary_combo_example.jpg "Binary Example"
 [image4]: ./examples/warped_straight_lines.jpg "Warp Example"
 [image5]: ./examples/color_fit_lines.jpg "Fit Visual"
@@ -42,7 +42,7 @@ You're reading it!
 
 In order to undistort the images, first we need the camera calibration matrix and distortion coefficient. These are found by taking pictures of a chessboard (in our case a 9x6 chessboard) and then applying the function `cv2.calibrateCamera`. 
 The chessboard images can be found in the folder `camera_cal`. 
-Note that some images are not perfect, and the chessboard is 'cut', thus the function `cv2.findChessboardCorners` cannot find all the corners. All the code that calibrates the camera, and also the function that undistort the image that we are going to use next, can be found in the Python class `Camera` (defined in file `Camera.py`)
+Note that some images are not perfect, and the chessboard is 'cut', thus the function `cv2.findChessboardCorners` cannot find all the corners. All the code that calibrates the camera, and also the function that undistort the image, can be found in the Python class `Camera` (defined in file `Camera.py`)
 
 Original                           |  Undistorted
 :---------------------------------:|:---------------------------------:
@@ -53,7 +53,7 @@ Original                           |  Undistorted
 #### 1. Provide an example of a distortion-corrected image.
 
 To demonstrate this step, I will describe how I apply the distortion correction to one of the test images like this one:
-![alt text][image2]
+![alt text][road_undistorted]
 
 #### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
 
