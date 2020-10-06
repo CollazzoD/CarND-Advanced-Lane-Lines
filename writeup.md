@@ -44,8 +44,9 @@ In order to undistort the images, first we need the camera calibration matrix an
 The chessboard images can be found in the folder `camera_cal`. 
 Note that some images are not perfect, and the chessboard is 'cut', thus the function `cv2.findChessboardCorners` cannot find all the corners. All the code that calibrates the camera, and also the function that undistort the image that we are going to use next, can be found in the Python class `Camera` (defined in file `Camera.py`)
 
-![alt text][calibration_original] 
-![alt text][calibration_undistorted]
+Original                           |  Undistorted
+:---------------------------------:|:---------------------------------:
+![alt text][calibration_original]  |  ![alt text][calibration_undistorted]
 
 ### Pipeline (single images)
 
