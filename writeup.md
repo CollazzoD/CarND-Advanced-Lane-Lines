@@ -22,8 +22,12 @@ The goals / steps of this project are the following:
 [threshold_original]: ./writeup/binary_combo_original.jpg "Original"
 [threshold_binary]: ./writeup/binary_combo_example.jpg "Binary Example"
 [warped]: ./writeup/warped_straight_lines.jpg "Warp Example"
-[image5]: ./examples/color_fit_lines.jpg "Fit Visual"
-[image6]: ./examples/example_output.jpg "Output"
+[sliding_window]: ./writeup/color_fit_lines.jpg "Fit Visual"
+[radius_curvature]: ./writeup/radius_of_curvature.png "Radius of curvature generic"
+[poly]: ./writeup/polynomial.png "Polynomial"
+[radius_curvature_applied]: ./writeup/radius_of_curvature_applied.png "Radius of curvature applied"
+[final_output]: ./writeup/final_output.jpg "Final output"
+
 [video1]: ./project_video.mp4 "Video"
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/571/view) Points
@@ -62,7 +66,7 @@ Original                           |  Undistorted
 
 #### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
 
-Class `Thresholds` (defined in `Thresholds.py`) is responsible to apply color transforms, gradients and other methods to crete a thresholded binary image.
+Class `Thresholds` (defined in `Thresholds.py`) is responsible to apply color transforms, gradients and other methods to create a thresholded binary image.
 
 The combination is defined at line #101 of `Thresholds.py`, inside `combine` function.
 Here's an example of my output for this step:
@@ -88,21 +92,54 @@ I tried to apply the `warp` function on a test image with straight lines and I w
 
 ![alt text][warped]
 
-#### 4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
+#### 4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial.
 
-Then I did some other stuff and fit my lane lines with a 2nd order polynomial kinda like this:
+Class `Lanes` defined in `Lanes.py` is the class implemented to find the lane-line pixels and fit their positions with a polynomial. It is divided in the following steps:
 
-![alt text][image5]
+1. take the histogram of thresholded and warped image: in order to decide explicitly which pixels are part of the lines and which belong to the left line and which belong to the right line, I took the histogram of where the binary activations from the thresholded and warped image occur
+2. sliding window: in the histogram from the previous step, we can see that there are two most prominent peaks; we can use that as a starting point for where to search for the lines, by using a sliding window, placed around the line centers, in order to find and follow the lines up to the top of the frame
+3. fit a polynomial: after we found all pixels belonging to each line through the sliding window method, we can use them to fit a polynomial
+
+These three steps are implemented in function `find_lane_pixels`, defined from line #42 to line #114 of `Lanes.py`.
+
+Furthermore, in order to speed up the process of finding lane lines in each frame, I implemented a search that uses the lane found in the previous frame to search for the new lane line position. This search can be found in function `search_around_poly`, defined from line #133 to line #156 of `Lanes.py`.
+
+Function `findLanes` defined at line #30 in `Lanes.py` is a function that, when called the first time, calls `find_lane_pixels`, while it calls `search_around_poly` all the other times.
+
+Here's an example of the procedure described:
+
+![alt text][sliding_window]
 
 #### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
-I did this in lines # through # in my code in `my_other_file.py`
+Both radius of curvature and vehicle position are calculated in class `Lanes`, which can be found in file `Lanes.py` (specifically, from line #158 to line #173).
+
+The radius of curvature at any point x of a function x = f(x) is given by :
+
+![alt text][radius_curvature]
+
+but considering that we have a polynomial of type
+
+![alt text][poly]
+
+we get that the radius of curvature is given by:
+
+![alt text][radius_curvature_applied]
+
+The lane curvature is calculated closest to the vehicle, so the formula is evaluated at the y value corresponding to the bottom of the image. In order to calculate the radius of curvature in the real world (and not in pixel world), y value is multiplied for a factor defined in `Lanes.py` at line #18.
+
+To find the vehicle position on the center, the following steps where taken:
+- Evaluate the left and right polynomials closest to the vehicle (same y as radius before)
+- Find the middle point
+- Take the difference with the center of the car (middle of the image) and transform in real world coordinate, by multiplying for a factor define in `Lanes.py` at line #19
+
+The sign between the distance between the lane center and the vehicle center gives if the vehicle is on to the left or the right.
 
 #### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 
-I implemented this step in lines # through # in my code in `yet_another_file.py` in the function `map_lane()`.  Here is an example of my result on a test image:
+I implemented this step in cell 4 of IPython notebook `Project.ipynb`, in the function `draw_lines_on_road`. I also drew the distance and the curvature on the image by using function `draw_overlay` defined in cell 5.
 
-![alt text][image6]
+![alt text][final_output]
 
 ---
 
@@ -118,4 +155,6 @@ Here's a [link to my video result](./project_video.mp4)
 
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+- The `Thresholds`'s class could be improved, by exploring some color transforms and combination more robust to light changes
+- The perspective transform defined in `BirdEyeView_Transform`'s class could be improved: in the image above, the lines are not perfectly parallel. With some different transform I could've achieved a better result
+- Lane finding defined in `Lane`'s class could be improved by introducing a sanity check, in order to see if the detection makes sense and maybe reset the search if it doesn't, and a smoothing, so as to achieve an output less wobbly
