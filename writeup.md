@@ -13,6 +13,18 @@ The goals / steps of this project are the following:
 * Warp the detected lane boundaries back onto the original image.
 * Output visual display of the lane boundaries and numerical estimation of lane curvature and vehicle position.
 
+Inside folder `output_images` you can find different folders containing images from the various steps of the project:
+
+- confront_undistorted : contains the comparison between the chessboard images before and after camera undistortion
+- output_detectObjpImgp : contains the chessboard images with the calibration's image points
+- output_undistorted : contains the chessboard images undistorted
+- test_binary_threshold : contains the test images after applying threshold 
+- test_bird_eye_view : contains the test images after applying a perspective transform
+- test_final_output : contains the test images after applying all the pipeline
+- test_sliding_window : contains the test images after applying lane line identification
+- test_undistorted : contains the test images undistorted
+- test_undistorted_confront : ontains the comparison between the test images before and after camera undistortion
+
 [//]: # (Image References)
 
 [calibration_original]: ./writeup/calibration_original.jpg "Original"
@@ -158,3 +170,4 @@ Here's a [link to my video result](./project_video.mp4)
 - The `Thresholds`'s class could be improved, by exploring some color transforms and combination more robust to light changes
 - The perspective transform defined in `BirdEyeView_Transform`'s class could be improved: in the image above, the lines are not perfectly parallel. With some different transform I could've achieved a better result
 - Lane finding defined in `Lane`'s class could be improved by introducing a sanity check, in order to see if the detection makes sense and maybe reset the search if it doesn't, and a smoothing, so as to achieve an output less wobbly
+- Find a way to address the case in which one of the two lines is not in the image (harder_challenge_video.mp4 has a case like this near the end of the video). Could be a case where the missing line is artificially placed at default distance during calculation.
